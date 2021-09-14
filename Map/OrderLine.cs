@@ -1,7 +1,4 @@
-﻿using DadataLocation;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DadataLocation.Models;
 
 namespace Map
 {

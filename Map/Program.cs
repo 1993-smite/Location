@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using DadataLocation;
 using System.Linq;
+using System.Threading;
 
 namespace Map
 {
@@ -16,7 +17,7 @@ namespace Map
             }
         }
 
-        static void Main(string[] args)
+        static void AutoLoadLocations()
         {
             var service = new DaDataLocationService();
 
@@ -57,6 +58,25 @@ namespace Map
                 AddLog($"{line.UserId};{line.OrderId};{line.Location.Lat};{line.Location.Lon};{location.Address};{location.Lat};{location.Lon}");
 
             }
+
+        }
+
+        static async void CheckPhone()
+        {
+            var service = new DaDataLocationService();
+            var res = await service.GetPhone("89208304463");
+
+            return;
+        }
+
+        static void Main(string[] args)
+        {
+            //AutoLoadLocations();
+
+            CheckPhone();
+
+            Thread.Sleep(20000);
+
 
             Console.WriteLine("Hello World!");
         }

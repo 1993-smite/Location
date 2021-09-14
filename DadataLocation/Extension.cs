@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
-namespace DadataLocation
+﻿namespace DadataLocation
 {
-    public static class Extension
+    public static class Extensions
     {
         public static double ToDouble(this string value)
         {

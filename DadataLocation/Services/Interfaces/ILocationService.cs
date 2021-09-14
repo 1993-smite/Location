@@ -1,18 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using DadataLocation.Models;
+using System.Collections.Generic;
 
-namespace DadataLocation
+namespace DadataLocation.Services.Interfaces
 {
-    /// <summary>
-    /// location
-    /// </summary>
-    public struct Location
-    {
-        public double Lat { get; set; }
-        public double Lon { get; set; }
-        public string Address { get; set; }
-    }
-
-
     interface ILocationService
     {
         /// <summary>
