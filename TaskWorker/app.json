@@ -1,0 +1,4 @@
+{
+  "connectionString": "Server=DOSTZAL;Initial Catalog=TestUsers;Integrated Security=True",
+  "file": "D:\\users.csv"
+}
