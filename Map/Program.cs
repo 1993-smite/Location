@@ -4,6 +4,7 @@ using System.IO;
 using DadataLocation;
 using System.Linq;
 using System.Threading;
+using DadataLocation.Models;
 
 namespace Map
 {
@@ -66,6 +67,8 @@ namespace Map
             var service = new DaDataLocationService();
             var res = await service.GetPhone("89208304463");
 
+            Console.WriteLine("{0} ({1})",(res as PhoneLocation)?.Location.Address ?? "", Thread.CurrentThread.ManagedThreadId);
+
             return;
         }
 
@@ -75,10 +78,10 @@ namespace Map
 
             CheckPhone();
 
-            Thread.Sleep(20000);
+            Thread.Sleep(10000);
 
 
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello World! ({0})", Thread.CurrentThread.ManagedThreadId);
         }
     }
 }
