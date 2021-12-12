@@ -1,12 +1,7 @@
 ﻿using LocationOsmApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PlaceOsmApi.Models;
 using PlaceOsmApi.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PlaceOsmApi.Controllers
 {
@@ -15,7 +10,8 @@ namespace PlaceOsmApi.Controllers
     public class RouteController : MapController
     {
 
-        public RouteController(IMapManager mapManager): base(mapManager)
+        public RouteController(IMapManager mapManager, IGeoLocationService geoLocationService)
+            : base(mapManager, geoLocationService)
         {
 
         }

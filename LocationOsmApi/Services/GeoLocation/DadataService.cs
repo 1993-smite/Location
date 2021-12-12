@@ -1,10 +1,8 @@
 ﻿using Dadata;
-using Dadata.Model;
 using LocationOsmApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using PlaceOsmApi.Extensions;
 
 namespace PlaceOsmApi.Services
 {
@@ -44,18 +42,5 @@ namespace PlaceOsmApi.Services
             return tks.Result;
         }
 
-    }
-
-    public static class DadataExtensions
-    {
-        public static Place ToPlace(this SuggestResponse<Address> response)
-        {
-            var suggestion = response.suggestions.FirstOrDefault();
-
-            double.TryParse(suggestion.data.geo_lat.Replace('.',','), out double lat);
-            double.TryParse(suggestion.data.geo_lon.Replace('.', ','), out double lon);
-
-            return new Place(suggestion.value, lat, lon);
-        }
     }
 }

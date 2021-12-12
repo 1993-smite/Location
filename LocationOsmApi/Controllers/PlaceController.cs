@@ -1,12 +1,6 @@
-﻿using LocationOsmApi.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using PlaceOsmApi.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlaceOsmApi.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LocationOsmApi.Controllers
 {

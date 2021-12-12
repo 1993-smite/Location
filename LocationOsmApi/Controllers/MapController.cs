@@ -1,19 +1,29 @@
-﻿using Itinero;
-using Microsoft.AspNetCore.Mvc;
-using PlaceOsmApi.Services;
+﻿using PlaceOsmApi.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PlaceOsmApi.Controllers
 {
-    public class MapController : Controller
+    /// <summary>
+    /// 
+    /// </summary>
+    public class MapController : GeoPlaceController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected Lazy<IMapManager> lazyMapManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IMapManager MapManager => lazyMapManager.Value;
 
-        public MapController(IMapManager mapManager)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapManager"></param>
+        /// <param name="geoLocationService"></param>
+        public MapController(IMapManager mapManager, IGeoLocationService geoLocationService): base(geoLocationService)
         {
             lazyMapManager = new Lazy<IMapManager>(() => mapManager);
         }
