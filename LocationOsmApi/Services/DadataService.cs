@@ -13,7 +13,7 @@ namespace PlaceOsmApi.Services
         private Lazy<SuggestClientAsync> lazyClientAsync;
         private SuggestClientAsync clientAsync => lazyClientAsync.Value;
 
-        public DadataService(string token, string secret)
+        public DadataService(string token)
         {
             lazyClientAsync = new Lazy<SuggestClientAsync>(()=> new SuggestClientAsync(token));
         }

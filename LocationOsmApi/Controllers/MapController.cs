@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Itinero;
+using Microsoft.AspNetCore.Mvc;
+using PlaceOsmApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,12 @@ namespace PlaceOsmApi.Controllers
 {
     public class MapController : Controller
     {
-        public MapController()
+        protected Lazy<IMapManager> lazyMapManager;
+        protected IMapManager MapManager => lazyMapManager.Value;
+
+        public MapController(IMapManager mapManager)
         {
-            
+            lazyMapManager = new Lazy<IMapManager>(() => mapManager);
         }
     }
 }

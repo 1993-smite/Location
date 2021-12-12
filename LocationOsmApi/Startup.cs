@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using Itinero;
 using LocationOsmApi.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using PlaceOsmApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 namespace LocationOsmApi
@@ -33,6 +35,7 @@ namespace LocationOsmApi
 
             
             services.AddResponseCaching();
+            services.AddMemoryCache();
 
             var xmlDoc = string.Format(@"{0}PlaceOsmApi.XML", AppDomain.CurrentDomain.BaseDirectory);
             services.AddSwaggerGen(c =>
@@ -53,9 +56,17 @@ namespace LocationOsmApi
             });
 
             var token = ConfigurationDadata.GetValue<string>("Token");
-            var secret = ConfigurationDadata.GetValue<string>("Secret");
             services.AddScoped<IGeoLocationService, DadataService>(
-                (provider)=> new DadataService(token, secret)
+                (provider)=> new DadataService(token)
+            );
+
+            var osrmLink = Configuration.GetValue<string>("OsrmApiLink");
+            var itineroFilePath = Configuration.GetValue<string>("ItineroOsmFilePath");
+            services.AddScoped<IMapManager, MapManager>(
+                (provider) => new MapManager(
+                    new List<IRouteService>() { 
+                        new OsrmService(osrmLink)
+                        , new ItineroService(itineroFilePath, MemoryCache.Default) })
             );
         }
 

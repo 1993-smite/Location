@@ -12,12 +12,12 @@ namespace LocationOsmApi.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class PlaceController : MapController
+    public class PlaceController : ControllerBase
     {
         Lazy<IGeoLocationService> lazyGeoLocationService;
         IGeoLocationService GeoLocationService => lazyGeoLocationService.Value;
 
-        public PlaceController(IGeoLocationService geoService): base()
+        public PlaceController(IGeoLocationService geoService)
         {
             lazyGeoLocationService = new Lazy<IGeoLocationService>(()=> geoService);
         }
@@ -28,13 +28,6 @@ namespace LocationOsmApi.Controllers
             var res = GeoLocationService.GetPlaceByAddress(address);
             return Ok(res);
         }
-
-        //[HttpGet]
-        //public async Task<Place> GetPlaceAsync(string address)
-        //{
-        //    var res = await (GeoLocationService as DadataService).GetPlaceByAddressAsync(address);
-        //    return res;
-        //}
 
         [HttpGet]
         public IActionResult GetPlaceByGeo(double lat, double lon)

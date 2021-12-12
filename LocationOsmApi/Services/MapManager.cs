@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace PlaceOsmApi.Services
 {
-    public class MapManager
+    public class MapManager: IMapManager
     {
         private LinkedList<IRouteService> routeServices;
 
         public MapManager()
         {
             routeServices = new LinkedList<IRouteService>();
+        }
+
+        public MapManager(IList<IRouteService> routeServicesList): this()
+        {
+            foreach (var routeService in routeServicesList)
+                routeServices.AddLast(new LinkedListNode<IRouteService>(routeService));
         }
 
         /// <summary>

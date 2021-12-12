@@ -8,7 +8,7 @@ namespace PlaceOsmApi.Models
 {
     public class RouteMapStep: Place
     {
-        public readonly RouteStat RouteStat;
+        public RouteStat RouteStat { get; private set; }
 
         public RouteMapStep(double lat, double lon)
         {

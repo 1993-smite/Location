@@ -7,8 +7,8 @@ namespace PlaceOsmApi.Models
 {
     public class RouteStat
     {
-        public readonly double Distance;
-        public readonly double Duration;
+        public double Distance { get; private set; }
+        public double Duration { get; private set; }
 
         public RouteStat(double distance, double duration)
         {

@@ -2,40 +2,34 @@
 using Itinero.IO.Osm;
 using Itinero.Osm.Vehicles;
 using LocationOsmApi.Models;
-using Microsoft.Extensions.Caching.Memory;
 using PlaceOsmApi.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 namespace PlaceOsmApi.Services
 {
-    public class ItineroService: IRouteService
+    public class ItineroService: CacheService<Router>, IRouteService
     {
-        private const string cacheKey = "ItineroOsmCacheKey";
         private readonly string filePath;
-        private IMemoryCache cache;
-        private TimeSpan period;
         private Lazy<Router> lazyRouter;
         private Router Router => lazyRouter.Value;
         private readonly Itinero.Profiles.Vehicle RouterProfile;
 
-        public ItineroService(string file, IMemoryCache memoryCache, TimeSpan? periodCache = null)
+        public ItineroService(string file, MemoryCache memoryCache = null, TimeSpan? periodCache = null): base(memoryCache, periodCache)
         {
             filePath = file;
-            cache = memoryCache;
             lazyRouter = new Lazy<Router>(()=> GetRouter());
-
-            period = periodCache.HasValue ? periodCache.Value : new TimeSpan(2, 0, 0, 0);
             RouterProfile = Vehicle.Car;
         }
 
         public Router GetRouter()
         {
             Router router;
-            if (cache == null || !cache.TryGetValue(cacheKey, out router))
+            router = GetItem(() =>
             {
                 var routerDb = new RouterDb();
                 using (var stream = new FileInfo(filePath).OpenRead())
@@ -43,9 +37,8 @@ namespace PlaceOsmApi.Services
                     routerDb.LoadOsmData(stream, RouterProfile);
                 }
                 router = new Router(routerDb);
-
-                cache?.Set(cacheKey, router, DateTimeOffset.Now.Add(period));
-            }
+                return router;
+            });
 
             return router;
         }
