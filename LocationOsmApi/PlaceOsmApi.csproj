@@ -15,6 +15,7 @@
     <PackageReference Include="Itinero.Geo" Version="1.5.1" />
     <PackageReference Include="Itinero.IO.Osm" Version="1.5.1" />
     <PackageReference Include="Itinero.IO.Shape" Version="1.5.1" />
+    <PackageReference Include="Itinero.Optimization" Version="0.14.5" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />

@@ -1,4 +1,6 @@
-﻿using LocationOsmApi.Models;
+﻿using Itinero;
+using Itinero.Profiles;
+using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ namespace PlaceOsmApi.Services
     public class MapManager: IMapManager
     {
         private LinkedList<IRouteService> routeServices;
+        public IRouteService ItineroService { get; private set; }
 
         public MapManager()
         {
@@ -19,7 +22,7 @@ namespace PlaceOsmApi.Services
         public MapManager(IList<IRouteService> routeServicesList): this()
         {
             foreach (var routeService in routeServicesList)
-                routeServices.AddLast(new LinkedListNode<IRouteService>(routeService));
+                Build(routeService);
         }
 
         /// <summary>
@@ -29,6 +32,10 @@ namespace PlaceOsmApi.Services
         /// <returns></returns>
         public LinkedList<IRouteService> Build(IRouteService routeService) {
             routeServices.AddLast(routeService);
+
+            if (routeService is ItineroService)
+                ItineroService = routeService;
+
             return routeServices;
         }
 
@@ -99,6 +106,11 @@ namespace PlaceOsmApi.Services
                 result = Table(places, service.Next);
             }
             return result;
+        }
+
+        public IList<Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places)
+        {
+            return ItineroService.RouteDetailItinero(vihicle, places);
         }
     }
 }

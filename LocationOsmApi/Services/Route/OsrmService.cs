@@ -108,5 +108,10 @@ namespace PlaceOsmApi.Services
 
             return route;
         }
+
+        IList<Itinero.Route> IRouteService.RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IList<Place> places)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

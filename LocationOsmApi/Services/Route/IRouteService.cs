@@ -1,4 +1,6 @@
-﻿using LocationOsmApi.Models;
+﻿using Itinero;
+using Itinero.Osm.Vehicles;
+using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
 using System;
 using System.Collections.Generic;
@@ -13,5 +15,7 @@ namespace PlaceOsmApi.Services
         RouteStat Route(IList<Place> places);
 
         RouteMap[] RouteDetail(IList<Place> places);
+
+        IList<Route> RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IList<Place> places);
     }
 }
