@@ -10,16 +10,15 @@
 
   <ItemGroup>
     <PackageReference Include="Dadata" Version="21.9.1" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.5" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.6" />
     <PackageReference Include="Itinero" Version="1.5.1" />
     <PackageReference Include="Itinero.Geo" Version="1.5.1" />
     <PackageReference Include="Itinero.IO.Osm" Version="1.5.1" />
     <PackageReference Include="Itinero.IO.Shape" Version="1.5.1" />
     <PackageReference Include="Itinero.Optimization" Version="0.14.5" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
-    <PackageReference Include="Osrm.Client" Version="3.1.0" />
+    <PackageReference Include="Osrm.Client.NetCore" Version="3.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
   </ItemGroup>

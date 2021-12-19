@@ -1,14 +1,14 @@
 ﻿using LocationOsmApi.Models;
 using Osrm.Client;
 using Osrm.Client.Models;
-using Osrm.Client.v5;
+using Osrm.Client.Models.Requests;
 using PlaceOsmApi.Models;
 using System;
+using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace PlaceOsmApi.Services
+namespace PlaceOsmApi.Services.RouteService
 {
     /// <summary>
     /// 
@@ -26,7 +26,7 @@ namespace PlaceOsmApi.Services
         public OsrmService(string osrmApiLink)
         {
             OsrmApiLink = osrmApiLink;
-            lazyOsrm5X = new Lazy<Osrm5x>(()=> new Osrm5x(OsrmApiLink));
+            lazyOsrm5X = new Lazy<Osrm5x>(()=> new Osrm5x(new HttpClient(),OsrmApiLink));
         }
 
         private Location[] toLocations(IList<Place> places)
@@ -47,7 +47,7 @@ namespace PlaceOsmApi.Services
         {
             var locations = toLocations(places);
 
-            var responce = osrm5X.Table(locations);
+            var responce = osrm5X.Table(locations).GetAwaiter().GetResult();
             var stats = new RouteStat[places.Count][];
             for (int y = 0; y < places.Count; y++)
             {
@@ -73,7 +73,7 @@ namespace PlaceOsmApi.Services
             var response = osrm5X.Route(new RouteRequest() {
                Coordinates = locations,
                Steps = false
-            });
+            }).GetAwaiter().GetResult();
 
             var rt = response.Routes.FirstOrDefault();
 
@@ -89,7 +89,7 @@ namespace PlaceOsmApi.Services
             {
                 Coordinates = locations,
                 Steps = false
-            });
+            }).GetAwaiter().GetResult();
 
             var route = new RouteMap[places.Count];
             int index = -1;

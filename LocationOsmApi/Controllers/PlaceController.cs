@@ -4,6 +4,9 @@ using System;
 
 namespace LocationOsmApi.Controllers
 {
+    /// <summary>
+    /// place controller
+    /// </summary>
     [Route("[controller]/[action]")]
     [ApiController]
     public class PlaceController : ControllerBase
@@ -11,11 +14,20 @@ namespace LocationOsmApi.Controllers
         Lazy<IGeoLocationService> lazyGeoLocationService;
         IGeoLocationService GeoLocationService => lazyGeoLocationService.Value;
 
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="geoService"></param>
         public PlaceController(IGeoLocationService geoService)
         {
             lazyGeoLocationService = new Lazy<IGeoLocationService>(()=> geoService);
         }
 
+        /// <summary>
+        /// get place by address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult GetPlace(string address)
         {
@@ -23,6 +35,12 @@ namespace LocationOsmApi.Controllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// get place by geo data
+        /// </summary>
+        /// <param name="lat"></param>
+        /// <param name="lon"></param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult GetPlaceByGeo(double lat, double lon)
         {

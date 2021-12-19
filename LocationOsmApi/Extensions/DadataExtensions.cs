@@ -7,6 +7,11 @@ namespace PlaceOsmApi.Extensions
 {
     public static class DadataExtensions
     {
+        /// <summary>
+        /// SuggestResponse<Address> to Place
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
         public static Place ToPlace(this SuggestResponse<Address> response)
         {
             var suggestion = response.suggestions.FirstOrDefault();
@@ -23,6 +28,12 @@ namespace PlaceOsmApi.Extensions
                 , suggestion.data.house);
         }
 
+        /// <summary>
+        /// load dadata service to get place
+        /// </summary>
+        /// <param name="place"></param>
+        /// <param name="dadataService"></param>
+        /// <returns></returns>
         public static Place Load(this Place place, DadataService dadataService)
         {
             Place result = place;

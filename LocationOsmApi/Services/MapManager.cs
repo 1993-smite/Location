@@ -1,11 +1,10 @@
-﻿using Itinero;
-using Itinero.Profiles;
+﻿using Itinero.Profiles;
 using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
+using PlaceOsmApi.Services.RouteService;
+using PlaceOsmApi.Services.RouteService.ItineroRouteService;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PlaceOsmApi.Services
 {
@@ -108,7 +107,7 @@ namespace PlaceOsmApi.Services
             return result;
         }
 
-        public IList<Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places)
+        public IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places)
         {
             return ItineroService.RouteDetailItinero(vihicle, places);
         }

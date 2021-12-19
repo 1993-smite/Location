@@ -2,6 +2,7 @@
 using Itinero.Profiles;
 using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
+using PlaceOsmApi.Services.RouteService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,6 @@ namespace PlaceOsmApi.Services
         /// <returns></returns>
         public RouteStat[][] Table(IList<Place> places, LinkedListNode<IRouteService> service = null);
 
-        IList<Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places);
+        IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places);
     }
 }

@@ -2,31 +2,32 @@
 using Itinero.Data.Network;
 using Itinero.IO.Osm;
 using Itinero.LocalGeo;
-using Itinero.Osm.Vehicles;
 using Itinero.Profiles;
 using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
+using PlaceOsmApi.Services.Route.ItineroRouteService;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Caching;
-using System.Threading.Tasks;
 
-namespace PlaceOsmApi.Services
+namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
 {
     public class ItineroService: CacheService<Router>, IRouteService
     {
         private readonly string filePath;
         private Lazy<Router> lazyRouter;
         private Router Router => lazyRouter.Value;
-        private Itinero.Profiles.Vehicle RouterProfile;
+        private Vehicle RouterProfile;
+
+        private Resolver resolver;
 
         public ItineroService(string file, MemoryCache memoryCache = null, TimeSpan? periodCache = null): base(memoryCache, periodCache)
         {
             filePath = file;
             RouterProfile = Itinero.Osm.Vehicles.Vehicle.Car;
             lazyRouter = new Lazy<Router>(()=> GetRouter(RouterProfile));
+            resolver = new Resolver();
         }
 
         public Router GetRouter(Itinero.Profiles.Vehicle profile)
@@ -94,55 +95,9 @@ namespace PlaceOsmApi.Services
             return rtMap;
         }
 
-        private List<Coordinate> coordinates = new List<Coordinate>();
-        private Dictionary<float, float> coord = new Dictionary<float, float>();
-        private bool isBetter(RoutingEdge edge)
+        public IList<Itinero.Route> RouteDetailItinero(Itinero.Profiles.Vehicle vehicle, IList<Place> places)
         {
-            foreach (var shape in edge.Shape)
-            {
-                if (!coord.ContainsKey(shape.Latitude))
-                {
-                    coord.Add(shape.Latitude, shape.Longitude);
-                }
-            }
-
-            return false;
-        }
-
-        private void Default()
-        {
-            coordinates.Clear();
-            coord.Clear();
-        }
-
-        private Dictionary<float, float> ResolveCoord(IProfileInstance[] profiles, Coordinate coordinate) 
-        {
-            Default();
-            var point = new Result<RouterPoint>(new RouterPoint(coordinate.Latitude, coordinate.Longitude, 0, 0));
-            var result = new Dictionary<float, float>();
-            var minDistance = 50;
-            while (result.Count < 4)
-            {
-                point = Router.TryResolve(profiles, coordinate, isBetter, minDistance);
-                result = new Dictionary<float, float>(coord);
-                minDistance += 50;
-            }
-            return result;
-        }
-        private Dictionary<float, float> ResolveCoord(IProfileInstance[] profiles, float lat, float lon)
-        {
-            return ResolveCoord(profiles, new Coordinate(lat, lon));
-        }
-
-
-        public IList<Route> RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IList<Place> places)
-        {
-            RouterProfile = vihicle;
-            //Router.VerifyAllStoppable = true;
-
-            var profiles = new IProfileInstance[2] { vihicle.Fastest(), vihicle.Shortest() };
-
-            var result = new List<Route>();
+            var result = new List<Itinero.Route>();
 
             bool isBuilded;
 
@@ -152,16 +107,16 @@ namespace PlaceOsmApi.Services
                 var from = places[index - 1];
                 var to = places[index];
 
-                var starts = ResolveCoord(profiles, (float)from.Latitute, (float)from.Longitude);
+                var starts = resolver.ResolveCoord(Router, vehicle, (float)from.Latitute, (float)from.Longitude);
 
-                var ends = ResolveCoord(profiles, (float)to.Latitute, (float)to.Longitude);
+                var ends = resolver.ResolveCoord(Router, vehicle, (float)to.Latitute, (float)to.Longitude);
 
                 
                 foreach (var st in starts)
                 {
                     foreach (var en in ends)
                     {
-                        var res = Router.TryCalculate(vihicle.Fastest(), st.Key, st.Value, en.Key, en.Value);
+                        var res = Router.TryCalculate(vehicle.Fastest(), st.Key, st.Value, en.Key, en.Value);
                         if (!res.IsError && res.Value != null)
                         {
                             result.Add(res.Value);

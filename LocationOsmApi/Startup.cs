@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PlaceOsmApi.Services;
+using PlaceOsmApi.Services.RouteService;
+using PlaceOsmApi.Services.RouteService.ItineroRouteService;
 using System;
 using System.Collections.Generic;
 using System.Linq;

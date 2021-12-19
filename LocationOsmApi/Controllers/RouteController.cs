@@ -4,37 +4,59 @@ using LocationOsmApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using PlaceOsmApi.Extensions;
 using PlaceOsmApi.Services;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace PlaceOsmApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    /// <summary>
+    /// route controller
+    /// </summary>
+    [Route("route/[action]")]
     [ApiController]
     public class RouteController : MapController
     {
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="mapManager"></param>
+        /// <param name="geoLocationService"></param>
         public RouteController(IMapManager mapManager, IGeoLocationService geoLocationService)
             : base(mapManager, geoLocationService)
         {
 
         }
 
+        /// <summary>
+        /// get route
+        /// </summary>
+        /// <param name="places"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GetRoute(IList<Place> places)
         {
             return Ok(MapManager.Route(places));
         }
 
+        /// <summary>
+        /// get route details
+        /// </summary>
+        /// <param name="places"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GetRouteDetails(IList<Place> places)
         {
             return Ok(MapManager.RouteDetail(places));
         }
 
+        /// <summary>
+        /// get route details itinero
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <param name="places"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("/{vehicle}")]
+        [Route("route/details/{vehicle}")]
         public IActionResult GetRouteDetailsItinero(string vehicle, IList<Place> places)
         {
             Itinero.Profiles.Vehicle profile = Vehicle.Pedestrian;
