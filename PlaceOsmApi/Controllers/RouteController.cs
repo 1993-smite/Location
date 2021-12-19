@@ -56,7 +56,7 @@ namespace PlaceOsmApi.Controllers
         /// <param name="places"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("route/details/{vehicle}")]
+        [Route("/route/details/{vehicle}")]
         public IActionResult GetRouteDetailsItinero(string vehicle, IList<Place> places)
         {
             Itinero.Profiles.Vehicle profile = Vehicle.Pedestrian;
