@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PlaceOsmApi</name>
+    </assembly>
+    <members>
+        <member name="M:PlaceOsmApi.Services.MapManager.Build(PlaceOsmApi.Services.IRouteService)">
+            <summary>
+            
+            </summary>
+            <param name="routeService"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PlaceOsmApi.Services.MapManager.Route(System.Collections.Generic.IList{LocationOsmApi.Models.Place},System.Collections.Generic.LinkedListNode{PlaceOsmApi.Services.IRouteService})">
+            <summary>
+            
+            </summary>
+            <param name="places"></param>
+            <param name="service"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PlaceOsmApi.Services.MapManager.RouteDetail(System.Collections.Generic.IList{LocationOsmApi.Models.Place},System.Collections.Generic.LinkedListNode{PlaceOsmApi.Services.IRouteService})">
+            <summary>
+            
+            </summary>
+            <param name="places"></param>
+            <param name="service"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PlaceOsmApi.Services.MapManager.Table(System.Collections.Generic.IList{LocationOsmApi.Models.Place},System.Collections.Generic.LinkedListNode{PlaceOsmApi.Services.IRouteService})">
+            <summary>
+            
+            </summary>
+            <param name="places"></param>
+            <param name="service"></param>
+            <returns></returns>
+        </member>
+        <member name="T:PlaceOsmApi.Services.OsrmService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:PlaceOsmApi.Services.OsrmService.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="osrmApiLink"></param>
+        </member>
+        <member name="M:PlaceOsmApi.Services.OsrmService.Table(System.Collections.Generic.IList{LocationOsmApi.Models.Place})">
+            <summary>
+            get table RouteStat[][]
+            </summary>
+            <param name="places"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PlaceOsmApi.Services.OsrmService.Route(System.Collections.Generic.IList{LocationOsmApi.Models.Place})">
+            <summary>
+            get array RouteMap[]
+            </summary>
+            <param name="places"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
