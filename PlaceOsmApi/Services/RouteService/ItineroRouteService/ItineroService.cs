@@ -9,10 +9,14 @@ using PlaceOsmApi.Services.Route.ItineroRouteService;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Caching;
 
 namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
 {
+    /// <summary>
+    /// itinero service
+    /// </summary>
     public class ItineroService: CacheService<Router>, IRouteService
     {
         private readonly string filePath;
@@ -22,15 +26,26 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
 
         private Resolver resolver;
 
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="memoryCache"></param>
+        /// <param name="periodCache"></param>
         public ItineroService(string file, MemoryCache memoryCache = null, TimeSpan? periodCache = null): base(memoryCache, periodCache)
         {
             filePath = file;
             RouterProfile = Itinero.Osm.Vehicles.Vehicle.Car;
-            lazyRouter = new Lazy<Router>(()=> GetRouter(RouterProfile));
+            lazyRouter = new Lazy<Router>(()=> ItineroRouter.GetRouter(RouterProfile));
             resolver = new Resolver();
         }
 
-        public Router GetRouter(Itinero.Profiles.Vehicle profile)
+        /// <summary>
+        /// get cached router
+        /// </summary>
+        /// <param name="profile"></param>
+        /// <returns></returns>
+        public Router GetCachedRouter(Vehicle profile)
         {
             Router router;
             router = GetItem(() =>
@@ -95,38 +110,52 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return rtMap;
         }
 
-        public IList<Itinero.Route> RouteDetailItinero(Itinero.Profiles.Vehicle vehicle, IList<Place> places)
+        public IList<Itinero.Route> RouteDetailItinero(Vehicle vehicle, IList<Place> places)
         {
             var result = new List<Itinero.Route>();
 
-            bool isBuilded;
-
             for (int index = 1; index < places.Count; index++)
+                result.Add(RouteDetailItinero(vehicle, places[index - 1], places[index]));
+
+            return result;
+        }
+
+        public IList<Itinero.Route> RouteDetailItineroAsParallel(Vehicle vehicle, IList<Place> places)
+        {
+            var result = new List<Itinero.Route>();
+
+            places
+                .Select((x, index) => new { Index = index, Item = x })
+                .AsParallel()
+                .Skip(1)
+                .Select(x=> RouteDetailItinero(vehicle, places[x.Index-1], places[x.Index]));
+
+            return result;
+        }
+
+        private Itinero.Route RouteDetailItinero(Vehicle vehicle, Place from, Place to)
+        {
+            var result = new Itinero.Route();
+
+            var starts = resolver.ResolveCoord(Router, vehicle, (float)from.Latitute, (float)from.Longitude);
+
+            var ends = resolver.ResolveCoord(Router, vehicle, (float)to.Latitute, (float)to.Longitude);
+
+            bool isBuilded = false;
+            foreach (var st in starts)
             {
-                isBuilded = false;
-                var from = places[index - 1];
-                var to = places[index];
-
-                var starts = resolver.ResolveCoord(Router, vehicle, (float)from.Latitute, (float)from.Longitude);
-
-                var ends = resolver.ResolveCoord(Router, vehicle, (float)to.Latitute, (float)to.Longitude);
-
-                
-                foreach (var st in starts)
+                foreach (var en in ends)
                 {
-                    foreach (var en in ends)
+                    var res = Router.TryCalculate(vehicle.Fastest(), st.Key, st.Value, en.Key, en.Value);
+                    if (!res.IsError && res.Value != null)
                     {
-                        var res = Router.TryCalculate(vehicle.Fastest(), st.Key, st.Value, en.Key, en.Value);
-                        if (!res.IsError && res.Value != null)
-                        {
-                            result.Add(res.Value);
-                            isBuilded = true;
-                            break;
-                        }
-                    }
-                    if (isBuilded)
+                        result = res.Value;
+                        isBuilded = true;
                         break;
+                    }
                 }
+                if (isBuilded)
+                    break;
             }
 
             return result;

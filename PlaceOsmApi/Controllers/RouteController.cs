@@ -4,8 +4,10 @@ using LocationOsmApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using PlaceOsmApi.Extensions;
 using PlaceOsmApi.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace PlaceOsmApi.Controllers
 {
@@ -16,15 +18,19 @@ namespace PlaceOsmApi.Controllers
     [ApiController]
     public class RouteController : MapController
     {
+        private readonly ILogger<RouteController> _logger;
+
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="mapManager"></param>
         /// <param name="geoLocationService"></param>
-        public RouteController(IMapManager mapManager, IGeoLocationService geoLocationService)
+        public RouteController(IMapManager mapManager, IGeoLocationService geoLocationService, ILogger<RouteController> logger)
             : base(mapManager, geoLocationService)
         {
+            _logger = logger;
 
+            _logger.LogDebug("Route request");
         }
 
         /// <summary>
@@ -73,20 +79,31 @@ namespace PlaceOsmApi.Controllers
                     break;
             }
 
-            for(int index = 0;index<places.Count;index++)
+            Route route = new Route();
+
+            try
             {
-                var place = places[index];
-                if (place.Lat == null && place.Lon == null && !string.IsNullOrEmpty(place.Address))
+                for (int index = 0; index < places.Count; index++)
                 {
-                    places[index] = geoLocationService.GetPlaceByAddress(place.Address);
+                    var place = places[index];
+                    if (place.Lat == null && place.Lon == null && !string.IsNullOrEmpty(place.Address))
+                    {
+                        places[index] = geoLocationService.GetPlaceByAddress(place.Address);
+                    }
+                }
+
+                var routes = MapManager.RouteDetailItinero(profile, places);
+                route = routes.ConcatenateRoutes();
+
+                using (var writer = new StreamWriter(@"D:\logs\route.geojson"))
+                {
+                    route.WriteGeoJson(writer);
                 }
             }
-
-            var routes = MapManager.RouteDetailItinero(profile, places);
-            var route = routes.ConcatenateRoutes();
-            using (var writer = new StreamWriter(@"D:\logs\route.geojson"))
+            catch (Exception err)
             {
-                route.WriteGeoJson(writer);
+                _logger.LogWarning(err.StackTrace);
+                _logger.LogWarning(err.Message);
             }
 
             return Ok(route.ToGeoJson());
