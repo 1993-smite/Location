@@ -10,16 +10,16 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
     /// </summary>
     public static class ItineroRouter
     {
-        public static Router GetRouter(Itinero.Profiles.Vehicle profile)
+        public static Router RtRouter;
+
+        static ItineroRouter()
         {
             var routerDb = new RouterDb();
             using (var stream = new FileInfo(@"D:\Moscow.osm.pbf").OpenRead())
             {
                 routerDb.LoadOsmData(stream, Itinero.Osm.Vehicles.Vehicle.Car, Itinero.Osm.Vehicles.Vehicle.Pedestrian);
             }
-            Router router = new Router(routerDb);
-
-            return router;
+            RtRouter = new Router(routerDb);
         }
     }
 }

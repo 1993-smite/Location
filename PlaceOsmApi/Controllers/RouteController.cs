@@ -97,7 +97,7 @@ namespace PlaceOsmApi.Controllers
 
                 using (var writer = new StreamWriter(@"D:\logs\route.geojson"))
                 {
-                    route.WriteGeoJson(writer);
+                    route.WriteGeoJson(writer, false, true, false, null);
                 }
             }
             catch (Exception err)
@@ -106,7 +106,7 @@ namespace PlaceOsmApi.Controllers
                 _logger.LogWarning(err.Message);
             }
 
-            return Ok(route.ToGeoJson());
+            return Ok(route.ToGeoJson(false, true, false));
         }
 
     }

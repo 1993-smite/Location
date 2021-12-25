@@ -36,7 +36,7 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
         {
             filePath = file;
             RouterProfile = Itinero.Osm.Vehicles.Vehicle.Car;
-            lazyRouter = new Lazy<Router>(()=> ItineroRouter.GetRouter(RouterProfile));
+            lazyRouter = new Lazy<Router>(()=> ItineroRouter.RtRouter);
             resolver = new Resolver();
         }
 
@@ -112,10 +112,11 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
 
         public IList<Itinero.Route> RouteDetailItinero(Vehicle vehicle, IList<Place> places)
         {
-            var result = new List<Itinero.Route>();
+            IList<Itinero.Route> result;
 
-            for (int index = 1; index < places.Count; index++)
-                result.Add(RouteDetailItinero(vehicle, places[index - 1], places[index]));
+            result = places.Count > 3
+                ? RouteDetailItineroAsParallel(vehicle, places)
+                : RouteDetailItineroAsEnumerable(vehicle, places);
 
             return result;
         }
@@ -128,7 +129,17 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
                 .Select((x, index) => new { Index = index, Item = x })
                 .AsParallel()
                 .Skip(1)
-                .Select(x=> RouteDetailItinero(vehicle, places[x.Index-1], places[x.Index]));
+                .ForAll(x => result.Add(RouteDetailItinero(vehicle, places[x.Index - 1], places[x.Index])));
+
+            return result;
+        }
+
+        public IList<Itinero.Route> RouteDetailItineroAsEnumerable(Vehicle vehicle, IList<Place> places)
+        {
+            var result = new List<Itinero.Route>();
+
+            for (int index = 1; index < places.Count; index++)
+                result.Add(RouteDetailItinero(vehicle, places[index - 1], places[index]));
 
             return result;
         }
