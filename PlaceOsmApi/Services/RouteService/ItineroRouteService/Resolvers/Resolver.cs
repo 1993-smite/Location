@@ -5,9 +5,9 @@ using Itinero.LocalGeo;
 using Itinero.Profiles;
 using System.Collections.Generic;
 
-namespace PlaceOsmApi.Services.Route.ItineroRouteService
+namespace PlaceOsmApi.Services.RouteService.ItineroRouteService.Resolvers
 {
-    public class Resolver
+    public class Resolver : IResolver
     {
         private double minDistanceInitial = 50;
         private List<Coordinate> coordinates = new List<Coordinate>();
@@ -18,7 +18,7 @@ namespace PlaceOsmApi.Services.Route.ItineroRouteService
 
         }
 
-        public bool isBetter(RoutingEdge edge)
+        private bool isBetter(RoutingEdge edge)
         {
             foreach (var shape in edge.Shape)
             {
@@ -63,6 +63,14 @@ namespace PlaceOsmApi.Services.Route.ItineroRouteService
             return ResolveCoord(router, profiles, new Coordinate(lat, lon));
         }
 
+        public void SetResolve(Coordinate coordinate, Coordinate resolveCoordinate)
+        {
+            //throw new System.NotImplementedException();
+        }
 
+        public void SetResolve(float lat, float lon, float resolveLat, float resolveLon)
+        {
+            //throw new System.NotImplementedException();
+        }
     }
 }

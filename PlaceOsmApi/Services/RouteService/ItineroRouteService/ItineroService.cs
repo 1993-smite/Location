@@ -1,11 +1,9 @@
 ﻿using Itinero;
-using Itinero.Data.Network;
 using Itinero.IO.Osm;
-using Itinero.LocalGeo;
 using Itinero.Profiles;
 using LocationOsmApi.Models;
 using PlaceOsmApi.Models;
-using PlaceOsmApi.Services.Route.ItineroRouteService;
+using PlaceOsmApi.Services.RouteService.ItineroRouteService.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,7 +22,7 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
         private Router Router => lazyRouter.Value;
         private Vehicle RouterProfile;
 
-        private Resolver resolver;
+        private IResolver resolver;
 
         /// <summary>
         /// constructor
@@ -37,7 +35,7 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             filePath = file;
             RouterProfile = Itinero.Osm.Vehicles.Vehicle.Car;
             lazyRouter = new Lazy<Router>(()=> ItineroRouter.RtRouter);
-            resolver = new Resolver();
+            resolver = new CachedResolver();
         }
 
         /// <summary>
@@ -110,9 +108,9 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return rtMap;
         }
 
-        public IList<Itinero.Route> RouteDetailItinero(Vehicle vehicle, IList<Place> places)
+        public IList<Route> RouteDetailItinero(Vehicle vehicle, IList<Place> places)
         {
-            IList<Itinero.Route> result;
+            IList<Route> result;
 
             result = places.Count > 3
                 ? RouteDetailItineroAsParallel(vehicle, places)
@@ -121,7 +119,7 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return result;
         }
 
-        public IList<Itinero.Route> RouteDetailItineroAsParallel(Vehicle vehicle, IList<Place> places)
+        public IList<Route> RouteDetailItineroAsParallel(Vehicle vehicle, IList<Place> places)
         {
             var result = new List<Itinero.Route>();
 
@@ -134,9 +132,9 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return result;
         }
 
-        public IList<Itinero.Route> RouteDetailItineroAsEnumerable(Vehicle vehicle, IList<Place> places)
+        public IList<Route> RouteDetailItineroAsEnumerable(Vehicle vehicle, IList<Place> places)
         {
-            var result = new List<Itinero.Route>();
+            var result = new List<Route>();
 
             for (int index = 1; index < places.Count; index++)
                 result.Add(RouteDetailItinero(vehicle, places[index - 1], places[index]));
@@ -144,9 +142,9 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return result;
         }
 
-        private Itinero.Route RouteDetailItinero(Vehicle vehicle, Place from, Place to)
+        private Route RouteDetailItinero(Vehicle vehicle, Place from, Place to)
         {
-            var result = new Itinero.Route();
+            var result = new Route();
 
             var starts = resolver.ResolveCoord(Router, vehicle, (float)from.Latitute, (float)from.Longitude);
 
@@ -160,6 +158,8 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
                     var res = Router.TryCalculate(vehicle.Fastest(), st.Key, st.Value, en.Key, en.Value);
                     if (!res.IsError && res.Value != null)
                     {
+                        resolver.SetResolve((float)from.Latitute, (float)from.Longitude, st.Key, st.Value);
+                        resolver.SetResolve((float)to.Latitute, (float)to.Longitude, en.Key, en.Value);
                         result = res.Value;
                         isBuilded = true;
                         break;

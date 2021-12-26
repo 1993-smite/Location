@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using PlaceOsmApi.Services;
 using PlaceOsmApi.Services.RouteService;
 using PlaceOsmApi.Services.RouteService.ItineroRouteService;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +70,10 @@ namespace LocationOsmApi
                     new List<IRouteService>() { 
                         new OsrmService(osrmLink)
                         , new ItineroService(itineroFilePath, MemoryCache.Default) })
+            );
+
+            services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(
+                (provider) => ConnectionMultiplexer.Connect("localhost")
             );
         }
 
