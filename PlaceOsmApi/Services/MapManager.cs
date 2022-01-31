@@ -107,7 +107,7 @@ namespace PlaceOsmApi.Services
             return result;
         }
 
-        public IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places)
+        public IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IEnumerable<Place> places)
         {
             return ItineroService.RouteDetailItinero(vihicle, places);
         }

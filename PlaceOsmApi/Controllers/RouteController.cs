@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using PlaceOsmApi.Services.ClusterizationService;
+using System.Linq;
 
 namespace PlaceOsmApi.Controllers
 {
@@ -107,6 +109,56 @@ namespace PlaceOsmApi.Controllers
             }
 
             return Ok(route.ToGeoJson(false, true, false));
+        }
+
+        /// <summary>
+        /// get route details itinero
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <param name="places"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("/route/details/car/{carCount}")]
+        public IActionResult GetRoutes(int carCount, IList<Place> places)
+        {
+            Itinero.Profiles.Vehicle profile = Vehicle.Car;
+
+            var clusterRoutes = new List<Route>(carCount);
+
+            try
+            {
+                for (int index = 0; index < places.Count; index++)
+                {
+                    var place = places[index];
+                    if (place.Lat == null && place.Lon == null && !string.IsNullOrEmpty(place.Address))
+                    {
+                        places[index] = geoLocationService.GetPlaceByAddress(place.Address);
+                    }
+                }
+
+                IClusterize clusterize = new KmeansClusterize();
+                var route = new Route();
+                var placeClusters = clusterize.Clusterize(carCount, places);
+
+                foreach(var cluster in placeClusters)
+                {
+                    var routes = MapManager.RouteDetailItinero(profile, cluster);
+                    route = routes.ConcatenateRoutes();
+                    clusterRoutes.Add(route);
+                }
+
+                using (var writer = new StreamWriter(@"D:\logs\route.geojson"))
+                {
+                    route.WriteGeoJson(writer, false, true, false, null);
+                }
+            }
+            catch (Exception err)
+            {
+                _logger.LogWarning(err.StackTrace);
+                _logger.LogWarning(err.Message);
+            }
+
+            return Ok(clusterRoutes.AsParallel().Select(x => x.ToGeoJson(false, true, false)));
         }
 
     }

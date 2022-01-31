@@ -132,12 +132,17 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             return result;
         }
 
-        public IList<Route> RouteDetailItineroAsEnumerable(Vehicle vehicle, IList<Place> places)
+        public IList<Route> RouteDetailItineroAsEnumerable(Vehicle vehicle, IEnumerable<Place> places)
         {
             var result = new List<Route>();
 
-            for (int index = 1; index < places.Count; index++)
-                result.Add(RouteDetailItinero(vehicle, places[index - 1], places[index]));
+            Place last = null;
+            foreach (var place in places)
+            {
+                if (!(last is null))
+                    result.Add(RouteDetailItinero(vehicle, last, place));
+                last = place;
+            }
 
             return result;
         }
@@ -170,6 +175,11 @@ namespace PlaceOsmApi.Services.RouteService.ItineroRouteService
             }
 
             return result;
+        }
+
+        public IList<Route> RouteDetailItinero(Vehicle vihicle, IEnumerable<Place> places)
+        {
+            return RouteDetailItinero(vihicle, places.ToList());
         }
     }
 }

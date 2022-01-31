@@ -43,6 +43,6 @@ namespace PlaceOsmApi.Services
         /// <returns></returns>
         public RouteStat[][] Table(IList<Place> places, LinkedListNode<IRouteService> service = null);
 
-        IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IList<Place> places);
+        IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IEnumerable<Place> places);
     }
 }

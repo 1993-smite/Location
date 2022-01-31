@@ -7,6 +7,7 @@ using System;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
+using Itinero.Profiles;
 
 namespace PlaceOsmApi.Services.RouteService
 {
@@ -109,7 +110,7 @@ namespace PlaceOsmApi.Services.RouteService
             return route;
         }
 
-        IList<Itinero.Route> IRouteService.RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IList<Place> places)
+        public IList<Itinero.Route> RouteDetailItinero(Vehicle vihicle, IEnumerable<Place> places)
         {
             throw new NotImplementedException();
         }

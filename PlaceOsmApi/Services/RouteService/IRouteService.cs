@@ -11,6 +11,6 @@ namespace PlaceOsmApi.Services.RouteService
 
         RouteMap[] RouteDetail(IList<Place> places);
 
-        IList<Itinero.Route> RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IList<Place> places);
+        IList<Itinero.Route> RouteDetailItinero(Itinero.Profiles.Vehicle vihicle, IEnumerable<Place> places);
     }
 }
